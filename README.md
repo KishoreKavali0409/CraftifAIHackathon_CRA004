@@ -52,7 +52,7 @@ bash scripts/run_guardianedge.sh /absolute/linux/path/video.mp4 --display
 
 The input and repository must be accessible at the same paths inside the container. Default recording mode saves `output.mp4`, `metadata.json`, `pipeline.log` and `incidents.jsonl` in a new `work/run-...` directory. Incident analysis runs **after video completion**.
 
-Model engines, ONNX files and video binaries are excluded from Git. See [reproduction and model assets](docs/reproduction.md) before running a fresh clone. Clean-machine standalone rebuilding has not been independently verified.
+Model engines, ONNX files and video binaries are excluded from Git. See [reproduction and model assets](docs/reproduction.md) before running a fresh clone.
 
 ## Test
 
@@ -92,10 +92,4 @@ See [architecture](docs/architecture.md), [reproduction](docs/reproduction.md) a
 
 The engine benchmark and live display measure different scopes. The FP16-requested engine contains mixed FP16/FP32 layers. See [evidence and measurement details](evidence/README.md) for original reports and qualifications.
 
-## Limitations
-
-The sample is a public street video with an explicitly labelled **demonstration zone**, not a validated industrial deployment. Frequent track loss can fragment incidents; tracker IDs do not establish personal identity. No facial recognition, measured safety accuracy, INT8 optimization or actual Jetson deployment is claimed. Jetson comparisons in the vendor report are modelled predictions.
-
-Event timestamps preserve relative source media PTS with `timestamp_basis=media_pts_epoch_not_capture_utc`. Their epoch date is **not the capture date**. Dwell time follows media PTS rather than processing speed.
-
-Generated vendor notices are retained. Model and sample-media use remains subject to the original terms; no blanket license for vendor assets is asserted.
+Generated vendor notices are retained. Model and sample-media use remains subject to the original terms.
