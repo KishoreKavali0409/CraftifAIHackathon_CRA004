@@ -37,6 +37,12 @@ def _timestamp(value):
 
 
 class ZoneEngine:
+    """MVC model: own validated zone rules and incident lifecycle state.
+
+    The caller supplies detections; this class does not detect or track people.
+    Keep presentation and transport concerns out of this module.
+    """
+
     def __init__(self, zones, confirm_frames=3, min_confidence=0.5):
         if not isinstance(confirm_frames, int) or isinstance(confirm_frames, bool) or confirm_frames < 1:
             raise ValueError("confirm_frames must be a positive integer")
@@ -63,10 +69,12 @@ class ZoneEngine:
             raise ValueError("at least one zone is required")
         self.confirm_frames = confirm_frames
         self.min_confidence = min_confidence
+        # Isolate persistence and incidents by (camera, stable track ID, zone).
         self._states = {}
         self._last = {}
 
     def _validate(self, frame):
+        """Validate the entire observation before process() changes any state."""
         if not isinstance(frame, dict):
             raise ValueError("frame must be an object")
         camera = frame.get("camera_id")
@@ -104,6 +112,7 @@ class ZoneEngine:
                 raise ValueError("bbox width and height must be positive")
             if label == "person" and confidence >= self.min_confidence:
                 left, top, width, height = bbox
+                # Normalize the foot point so the zone works across resolutions.
                 try:
                     foot = ((left + width / 2) / frame["width"], (top + height) / frame["height"])
                 except OverflowError as exc:
@@ -114,6 +123,8 @@ class ZoneEngine:
         return camera, index, timestamp, objects
 
     def _event(self, kind, frame, obj, zid, state):
+        # Each event gets a new ID; entry and exit share their incident ID.
+        # evidence_source describes the input, not proof of real inference.
         return {"event_id": str(uuid4()), "incident_id": state["incident_id"],
                 "event_type": kind, "timestamp_utc": frame["timestamp_utc"],
                 "camera_id": frame["camera_id"], "frame_id": frame["frame_id"],
@@ -139,6 +150,7 @@ class ZoneEngine:
                         self._states[key] = state
                     state["count"] += 1
                     state["last_object"] = obj
+                    # Confirm once; sustained presence must not flood alerts.
                     if not state["active"] and state["count"] >= self.confirm_frames:
                         state["active"] = True
                         events.append(self._event("RESTRICTED_ZONE_INTRUSION", frame, obj, zid, state))
@@ -148,6 +160,7 @@ class ZoneEngine:
                         event["dwell_seconds"] = (timestamp - state["first_time"]).total_seconds()
                         events.append(event)
                     del self._states[key]
+        # Absence can mean occlusion or tracking failure, not a proven exit.
         for key in list(self._states):
             if key[0] == camera and key not in seen:
                 state = self._states.pop(key)
