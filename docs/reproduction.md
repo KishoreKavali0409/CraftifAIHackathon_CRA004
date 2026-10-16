@@ -8,7 +8,7 @@ Custom changes to the working copy:
 
 1. `meta_json.cpp` calls the presentation-only `guardianedge_zone` helper before serializing metadata.
 2. `guardianedge_zone.h` is generated from `config/pedestrian-demo.json` by the overlay installer; its Makefile dependency triggers a rebuild.
-3. The recording sink uses `mp4mux faststart=true` instead of fragmented qtmux after the first recording caused FFmpeg NAL-unit decode warnings. The initial still image was visually verified; final recording validation is recorded in the ledger.
+3. The recording sink uses `mp4mux faststart=true` instead of fragmented qtmux after the first recording caused FFmpeg NAL-unit decode warnings. The initial still image was visually verified; final recording validation is recorded in `evidence/verification-summary.json` and the runtime evidence.
 
 Run the installer as a module from the repository root:
 

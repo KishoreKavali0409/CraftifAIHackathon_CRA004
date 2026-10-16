@@ -1,7 +1,6 @@
 # Genuine evidence inventory
 
-- `pipeline-ir.png`: screenshot of the actual PipeGen interactive Pipeline IR graph.
-- `PipelineIR.json`: actual generated IR copied before the model node was updated to its TensorRT plan. Preserve as generation evidence; do not treat it as the final exported application.
+- `pipeline-ir.png`: screenshot of the actual PipeGen interactive Pipeline IR graph. The final exported graph is `../pipegen-export/PipelineIR.json`.
 - `tensorrt-speed.png`: screenshot of PipeGen's actual engine benchmark summary.
 - `PipeGen-ModelStage.json`: unmodified PipeGen model-stage report including build warnings and measured engine results.
 
