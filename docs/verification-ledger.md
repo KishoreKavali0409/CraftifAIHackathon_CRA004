@@ -65,3 +65,13 @@ actual export; screenshots; GitHub URL; active deadline/form; submission receipt
 - Separated domain model, metadata controller, and JSONL presentation. Existing CLI and public ZoneEngine imports preserved.
 - Added four controller integration tests using the real model and in-memory streams. Observed missing MVC modules fail first, then all 25 tests passed on Windows after implementation.
 - The real PipeGen metadata adapter, account authentication and runtime evidence are still pending; no detector or benchmark results claimed.
+
+## 16 October 2026, approximately 21:00 IST — resumed pipeline setup
+- Pushed MVC explanatory comments as c63a996; all 25 tests passed on Windows and Ubuntu. No runtime behavior changed.
+- Existing PipeGen container had exited normally. Restarted official launcher; all prerequisite checks passed and cached runtime reused.
+- Actual PipeGen main screen now shows signed-in user. Account authentication is no longer the current blocker.
+- Submitted GuardianEdge requirement in the actual app; it parsed input/output and opened its nine-step requirement configuration wizard. This is not completion of the Requirement stage.
+- Inspected real bundled video previews; requested changing the initial fisheye sample_cam5.mp4 to clearer sample_720p.mp4 with pedestrians. Input update is processing; verify final persisted settings in app.
+- Actual container GPU check: MX550 2048 MiB, 0 MiB allocated before model compilation. No engine, speed report, inference result or export yet.
+
+- Actual app accepted sample_720p.mp4: H.264 1280x720, 30 fps, 48.067 seconds verified with ffprobe. Selected RestrictedAreaMonitoring catalog source rather than unrelated abandonment example; actual vendor downloader is active. ONNX/OpenCV reference inspected, not executed as replacement inference.

@@ -1,6 +1,6 @@
 # GuardianEdge AI — Antigravity continuation context
 
-Updated: 16 October 2026, approximately 20:30 IST. Read this file before resuming. This is an engineering handoff, not evidence that the hackathon project is complete.
+Updated: 16 October 2026, approximately 21:12 IST. Read this file before resuming. This is an engineering handoff, not evidence that the hackathon project is complete.
 
 ## Mission and priorities
 
@@ -10,7 +10,7 @@ Read `AGENTS.md` and `CODEX_HANDOFF.md` fully. They are the original handoff and
 
 ## Current blocker and immediate next action
 
-**PipeGen 0.5.1 is installed. Its full DeepStream runtime download completed. The actual PipeGen sign-in GUI opened, but the user reports they cannot select fields or enter credentials. Account authentication has NOT completed.**
+**PipeGen 0.5.1 is installed and SIGNED IN as of the latest actual GUI observation. Its full DeepStream runtime is cached and container craftifai-amd64-v3 is running. The real Requirement wizard is active, clearer sample_720p.mp4 input was accepted, and the selected RestrictedAreaMonitoring catalog source is downloading its YOLO11s ONNX model. No TensorRT compile, live inference, speed report or export yet.**
 
 The user asked where the credentials are. Explained: use their CraftifAI Developer email/password used for downloads; Sign up or Forgot Password if needed. Agent does not possess account credentials. User must enter secrets in official app/site themselves.
 
@@ -108,7 +108,7 @@ PowerShell nesting split `-frames:v` incorrectly; use `-vframes 1` or a shell sc
 
 ## Mandatory work STILL pending
 
-1. Resolve sign-in input/focus and have user authenticate in official app.
+1. Continue the active Requirement wizard after catalog model download; authentication is now completed.
 2. Complete real PipeGen **Requirement → Pipeline IR → Model → Compiler → Run**.
 3. Supported lightweight person detector, single stream, batch 1, low memory; FP16 only if supported. 2 GB GPU is a real feasibility constraint.
 4. Actual TensorRT engine compiled through PipeGen, **PipeGen speed report** saved. FP16 alone does not qualify INT8 bonus.
@@ -154,3 +154,8 @@ Refresh time and remaining deadline. Inspect existing container/app without disr
 ## MVC implementation update — 16 October 2026
 
 The metadata analytics now uses `guardianedge/models/zones.py`, `controllers/metadata.py`, and `views/jsonl.py`. The CLI is a composition root and the old `guardianedge.zones` imports remain compatible. `MetadataController.process_frame` is the integration entry point for a future verified PipeGen adapter. See `docs/architecture.md`. The 25-test suite includes controller coverage; these remain synthetic logic tests, not inference evidence. PipeGen authentication/input and all mandatory generation/runtime evidence remain pending.
+
+
+## Latest runtime continuation
+
+Actual PipeGen project directory: `/home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb`. Selected catalog source: `/home/kishore/.pipegen/kishorekishore0409/cache/catalog/backup-19-repos/RestrictedAreaMonitoring/RestrictedAreaMonitoring`. Read its application.py; it is the original ONNX/OpenCV reference, not the generated DeepStream export. Do not run it as a substitute. Actual GUI must generate the DeepStream pipeline. Model downloader uses gdown to fetch a ready ONNX from its vendor-specified Google Drive URL; a 26 MB partial file was observed around 21:12 IST. Do not execute duplicate downloads while the app works. Restart launcher session 40455 is active; keep it running. Code comments pushed as c63a996; all25 tests verified again.
