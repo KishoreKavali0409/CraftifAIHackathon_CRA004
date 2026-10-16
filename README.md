@@ -4,7 +4,7 @@ Proactive Industrial Safety Intelligence — CraftifAI PipeGen Track A.
 
 ## Current status
 **In development; not yet a verified hackathon submission.** The custom zone
-analytics and JSONL consumer pass 18 tests. PipeGen 0.5.1 is installed. Pipeline generation,
+analytics and JSONL consumer pass 21 tests. PipeGen 0.5.1 is installed. Pipeline generation,
 TensorRT compilation, live inference, actual metadata integration and evidence
 are pending. See `docs/verification-ledger.md` for the precise status.
 

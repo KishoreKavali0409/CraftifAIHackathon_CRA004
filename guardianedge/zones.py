@@ -6,7 +6,10 @@ from uuid import uuid4
 
 
 def _number(value):
-    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+    try:
+        return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+    except OverflowError:
+        return False
 
 
 def point_in_polygon(point, polygon):
@@ -100,7 +103,14 @@ class ZoneEngine:
             if bbox[2] <= 0 or bbox[3] <= 0:
                 raise ValueError("bbox width and height must be positive")
             if label == "person" and confidence >= self.min_confidence:
-                objects.append({"track_id": tid, "confidence": confidence, "bbox": list(bbox)})
+                left, top, width, height = bbox
+                try:
+                    foot = ((left + width / 2) / frame["width"], (top + height) / frame["height"])
+                except OverflowError as exc:
+                    raise ValueError("derived person position overflows") from exc
+                if not all(_number(value) for value in foot):
+                    raise ValueError("derived person position must be finite")
+                objects.append({"track_id": tid, "confidence": confidence, "bbox": list(bbox), "foot": foot})
         return camera, index, timestamp, objects
 
     def _event(self, kind, frame, obj, zid, state):
@@ -117,8 +127,7 @@ class ZoneEngine:
         camera, index, timestamp, objects = self._validate(frame)
         events, seen = [], set()
         for obj in objects:
-            left, top, width, height = obj["bbox"]
-            foot = ((left + width / 2) / frame["width"], (top + height) / frame["height"])
+            foot = obj["foot"]
             for zid, polygon in self.zones:
                 key = (camera, obj["track_id"], zid)
                 seen.add(key)

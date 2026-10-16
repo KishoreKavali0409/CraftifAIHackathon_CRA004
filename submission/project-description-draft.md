@@ -14,7 +14,7 @@ person-detection pipeline with a TensorRT engine. The implemented downstream
 analytics module checks each person's bounding-box bottom-center against a
 configurable polygon, confirms entry over three processed observations, suppresses
 duplicate alerts, records observed exits, and reports lost tracks as uncertain.
-Its JSONL consumer and state machine currently pass 18 software tests.
+Its JSONL consumer and state machine currently pass 21 software tests.
 
 ## Track and integration
 Track A: PipeGen. The five-stage pipeline, supported model, precision, actual

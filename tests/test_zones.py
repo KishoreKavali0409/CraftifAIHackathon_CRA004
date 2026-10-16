@@ -123,6 +123,35 @@ class ZoneTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ZoneEngine([{"id": "bad", "polygon": polygon}])
 
+    def test_coordinate_overflow_rejects_entire_frame_before_advancing_any_person(self):
+        first = frame(1)
+        first.update(width=1, height=1)
+        first["objects"][0]["bbox"] = [0.4, 0.1, 0.2, 0.5]
+        self.engine.process(first)
+        second = copy.deepcopy(first)
+        second.update(frame_id=2, timestamp_utc="2026-10-16T13:00:02Z")
+        invalid = copy.deepcopy(second)
+        invalid["objects"].append({"track_id": "overflow", "class_name": "person",
+                                   "confidence": 0.9, "bbox": [0, 10**308, 1, 10**308]})
+        with self.assertRaises(ValueError):
+            self.engine.process(invalid)
+        self.assertEqual(self.engine.process(second), [])
+        third = copy.deepcopy(second)
+        third.update(frame_id=3, timestamp_utc="2026-10-16T13:00:03Z")
+        self.assertEqual(len(self.engine.process(third)), 1)
+
+    def test_unrepresentable_integer_is_rejected_as_invalid_metadata(self):
+        invalid = frame(1)
+        invalid["objects"][0]["bbox"][0] = 10**400
+        with self.assertRaises(ValueError):
+            self.engine.process(invalid)
+
+    def test_nonfinite_derived_position_is_rejected(self):
+        invalid = frame(1)
+        invalid["width"] = 5e-324
+        with self.assertRaises(ValueError):
+            self.engine.process(invalid)
+
 
 if __name__ == "__main__":
     unittest.main()
