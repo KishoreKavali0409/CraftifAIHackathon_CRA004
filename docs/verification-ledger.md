@@ -35,7 +35,7 @@ actual export; screenshots; GitHub URL; active deadline/form; submission receipt
 - Zone-engine tests written before implementation: initial run failed on missing module; implemented engine then 14/14 passed.
 - CLI tests written first: all four failed on missing entry point; implementation added, full-suite verification follows.
 
-## 2026-10-16 19:00–19:08 IST — source and review
+## 2026-10-16 19:00–19:05 IST — source and review
 - CLI plus zone suite passed 18/18 on Windows and Ubuntu.
 - Reverified actual cached CUDA-container GPU passthrough after Toolkit installation; saved timestamped `work/setup-verification.txt` in the Linux workspace.
 - GitHub user completed official device authentication; verified account KishoreKavali0409.
@@ -43,7 +43,7 @@ actual export; screenshots; GitHub URL; active deadline/form; submission receipt
 - Independent read-only review found one Important issue: derived coordinate overflow could occur after partial state mutation.
 - Added three regression tests first; observed two overflow errors and one missing-validation failure.
 - Moved coordinate derivation/validation before mutation; rejects unrepresentable integers and nonfinite derived positions as ValueError.
-- Full suite passed 21/21 on Windows after the fix. Ubuntu verification and push follow.
+- Full suite passed 21/21 on Windows and Ubuntu after the fix; pushed commit 710c2b5 to the private repository.
 - GUI was paused after user pressed Escape; user explicitly authorized resuming PipeGen GUI control.
 - Actual image manifest reports 44 layers, 12.61 GiB compressed. Large layers are actively transferring; application GUI and all five pipeline stages are still pending.
 
@@ -51,3 +51,12 @@ actual export; screenshots; GitHub URL; active deadline/form; submission receipt
 - Upstream tracker stability, real inference provenance and exported schema remain pending integration checks, not unit-test claims.
 - Frame-number gaps and equal timestamps follow the documented processed-observation/nondecreasing-time contract. The actual adapter must send every processed observation, including empty frames.
 - No other concrete code findings or deferred minor findings from the review pass.
+
+## 2026-10-16 19:20 IST — runtime download blocker
+- First vendor-image pull failed with `lookup registry-1.docker.io: no such host`; secondary progress client also reported auth.docker.io DNS failure.
+- Verified Windows DNS answers and Ubuntu HTTPS connectivity (registry HTTP 401, auth endpoint HTTP 404), indicating DNS/connectivity had recovered.
+- Retried the official launcher using `script -e -q -f -c pipegen work/pipegen-retry.log`, keeping a detailed progress log.
+- Some previously downloaded but unfinalized layers restarted; finalized layers can be reused. Do not assume partial bytes survived.
+- Runtime download remains active. No PipeGen GUI, model compilation, engine, benchmark or live inference verified yet.
+- User confirmed no organizer-provided cloud GPU access is available; continue local path.
+- User explicitly authorized resuming PipeGen GUI control after the earlier Escape interruption.
