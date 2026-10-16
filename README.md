@@ -1,5 +1,9 @@
 # GuardianEdge AI
 
+**Hackathon project:** `CraftifAIHackathon_CRA004`
+**Participant code:** `CRA004`
+**Project homepage:** https://github.com/KishoreKavali0409/CraftifAIHackathon_CRA004
+
 Explainable person-zone incident monitoring built with **CraftifAI PipeGen**, NVIDIA DeepStream and TensorRT.
 
 GuardianEdge turns tracked person detections into structured intrusion, observed-exit and track-loss events. The real PipeGen workflow completed all five stages: **Requirement → Pipeline IR → Model → Compiler → Run**.
@@ -200,8 +204,8 @@ cd ~/craftifai/guardianedge-ai
 On another machine, clone it first:
 
 ```bash
-git clone https://github.com/KishoreKavali0409/guardianedge-ai.git
-cd guardianedge-ai
+git clone https://github.com/KishoreKavali0409/CraftifAIHackathon_CRA004.git
+cd CraftifAIHackathon_CRA004
 ```
 
 Run the adapter from the repository root:
@@ -288,6 +292,10 @@ Saved verification transcripts are in `evidence/unit-tests-ubuntu.txt` and `evid
 | `evidence/` | Genuine outputs, screenshots, reports and test transcripts |
 
 See [architecture](docs/architecture.md), [reproduction](docs/reproduction.md) and the [original export guide](pipegen-export/README.md).
+
+## PipeGen Pipeline IR
+
+![PipeGen Pipeline IR node graph](evidence/pipeline-ir.png)
 
 ## Verified results
 
