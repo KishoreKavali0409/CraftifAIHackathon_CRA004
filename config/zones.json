@@ -1,0 +1,7 @@
+{
+  "confirm_frames": 3,
+  "min_confidence": 0.5,
+  "zones": [
+    {"id": "restricted-A", "polygon": [[0.4, 0.4], [0.8, 0.4], [0.8, 0.9], [0.4, 0.9]]}
+  ]
+}

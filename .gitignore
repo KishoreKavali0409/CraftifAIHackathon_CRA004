@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.deb
+*.engine
+*.plan
+*.onnx
+*.mp4
+*.mkv
+*.tar
+*.tar.gz
+work/

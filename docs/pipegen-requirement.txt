@@ -1,0 +1,23 @@
+Create GuardianEdge AI, a real-time single-stream NVIDIA DeepStream person
+detection pipeline using CraftifAI PipeGen. Target an NVIDIA MX550 with 2 GB VRAM:
+batch 1, one local MP4, a supported lightweight pretrained ONNX detector, and
+TensorRT FP16 only if supported; otherwise use a supported precision. Do not train
+a new model. Prefer a catalog pipeline known to compile on this environment.
+
+The input clip contains people approaching, entering and leaving a restricted
+area. Render detections. Include a supported tracker producing stable object IDs
+and actionable per-frame JSON metadata, including empty inference frames, frame
+number, timestamp, frame size, class, confidence and pixel bounding boxes. Prefer
+JSON files over MQTT for the first run to reduce setup dependencies.
+
+Complete Requirement, Pipeline IR, Model, Compiler and Run. Preserve the real
+TensorRT engine benchmark/speed report, Pipeline IR graph and exported generated
+application, configurations and run.sh. First get the supported detector running.
+Then integrate polygon zone analytics through a supported metadata output or
+generated-app extension: bottom-center inside polygon for 3 processed frames
+opens one incident, suppress repeats, observed exit closes it, re-entry opens a
+new incident, track loss is explicitly unknown. Use actual metadata and measurements.
+
+Do not save identifiable frames by default. Single-stream, no model ensemble.
+If a requested feature is unsupported, explain the supported extension point
+instead of inventing a node or control.
