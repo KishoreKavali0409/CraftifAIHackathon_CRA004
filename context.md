@@ -1,6 +1,6 @@
 # GuardianEdge AI — Antigravity continuation context
 
-Updated: 16 October 2026, approximately 21:12 IST. Read this file before resuming. This is an engineering handoff, not evidence that the hackathon project is complete.
+Updated: 16 October 2026 after final coding and runtime verification. Read this file before resuming. This is an engineering handoff, not evidence that the hackathon project is complete.
 
 ## Mission and priorities
 
@@ -8,13 +8,11 @@ User wants a real CraftifAI PipeGen Track A hackathon submission before **16 Oct
 
 Read `AGENTS.md` and `CODEX_HANDOFF.md` fully. They are the original handoff and contain useful requirements, but their installation status is OLD. This context supersedes their earlier status claims. Preserve working Docker Desktop, WSL and GPU integration. Do not install a competing Linux Docker daemon, podman-docker or replace NVIDIA drivers. Never fake benchmarks, graphs, exports, screenshots or inference events.
 
-## Current blocker and immediate next action
+## Current verified state and next action
 
-**PipeGen 0.5.1 is installed and SIGNED IN as of the latest actual GUI observation. Its full DeepStream runtime is cached and container craftifai-amd64-v3 is running. The real Requirement wizard is active, clearer sample_720p.mp4 input was accepted, and the selected RestrictedAreaMonitoring catalog source is downloading its YOLO11s ONNX model. No TensorRT compile, live inference, speed report or export yet.**
+**Core coding and configured-machine verification are complete.** The real PipeGen app is signed in; all five stages completed, an actual TensorRT engine and speed report were saved, the generated DeepStream app ran real video, and its actual export is retained. MVC analytics maps the real schema, draws the configured zone via a native presentation extension, and produces actual incident JSON from recorded frame metadata. All32 tests passed Windows and Ubuntu. Full final video decode passed; a deliberately corrupt video was rejected. Independent review found no remaining concrete bugs after provenance fixes.
 
-The user asked where the credentials are. Explained: use their CraftifAI Developer email/password used for downloads; Sign up or Forgot Password if needed. Agent does not possess account credentials. User must enter secrets in official app/site themselves.
-
-Latest attempt to inspect the window via Codex Computer Use immediately returned: “Computer Use was stopped by the user with the physical Escape key.” No further GUI actions occurred. Codex instructed user to click PipeGen title bar and try Tab; effectiveness is UNKNOWN. Respect the stop and obtain renewed authorization before resuming this agent's GUI control. Do not infer that PipeGen is frozen from this alone. Diagnose focus/input versus process hang. Do not reinstall the runtime or repeat its huge download.
+The user will submit personally. Do not submit forms. Deliver the detailed DOCX technical/run/test guide and verified source/evidence. Instructions and limits are in README and docs/reproduction.md; evidence/verification-summary.json is the final verified summary. Incident processing currently occurs after the video completes. The installation history below is retained for recovery, not current status.
 
 ## Locations and machine
 
@@ -159,3 +157,7 @@ The metadata analytics now uses `guardianedge/models/zones.py`, `controllers/met
 ## Latest runtime continuation
 
 Actual PipeGen project directory: `/home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb`. Selected catalog source: `/home/kishore/.pipegen/kishorekishore0409/cache/catalog/backup-19-repos/RestrictedAreaMonitoring/RestrictedAreaMonitoring`. Read its application.py; it is the original ONNX/OpenCV reference, not the generated DeepStream export. Do not run it as a substitute. Actual GUI must generate the DeepStream pipeline. Model downloader uses gdown to fetch a ready ONNX from its vendor-specified Google Drive URL; a 26 MB partial file was observed around 21:12 IST. Do not execute duplicate downloads while the app works. Restart launcher session 40455 is active; keep it running. Code comments pushed as c63a996; all25 tests verified again.
+
+## User controlled submission and final verified coding status
+
+User explicitly said they will submit personally. Do NOT submit forms for them. Final code uses MVC, actual PipeGen metadata adapter, native zone overlay and scripts/run_guardianedge.sh. Thirty-two tests passed Windows/Ubuntu. All five PipeGen stages, real model engine/benchmark, generated DeepStream run and actual export are complete. See README, acceptance checklist and evidence/verification-summary.json for the verified final details. Final real run is work/run-20261016T162714Z; 1442frames/140events, video full decode passed, corrupt-video failure checked. Code is a local configured-machine prototype with post-run incident processing and frequent track loss; not production validated. Detailed DOCX technical/run/test guide is being prepared at the user's request.

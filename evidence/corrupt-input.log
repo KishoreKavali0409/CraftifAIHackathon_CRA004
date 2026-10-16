@@ -1,0 +1,27 @@
+[run.sh] JSON -> /home/kishore/craftifai/guardianedge-ai/work/corrupt-probe/metadata.json
+make: Entering directory '/home/kishore/craftifai/guardianedge-ai/pipegen-export/pipeline/parsers'
+make: Nothing to be done for 'all'.
+make: Leaving directory '/home/kishore/craftifai/guardianedge-ai/pipegen-export/pipeline/parsers'
+[run.sh] encoder: x264enc (software) @ 8000kbit/s — no /dev/v4l2-nvenc
+Setting pipeline to PAUSED ...
+gstnvtracker: Loading low-level lib at /opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
+[NvMultiObjectTracker] Initialized
+0:00:00.374333052 [32m 1933[00m 0x6453f3eb2c20 [36mINFO   [00m [00m    nvinfer_backport gstnvinfer.cpp:684:gst_nvinfer_backport_logger:<nvinferbackport0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::deserializeEngineAndBackend() <nvdsinfer_context_impl.cpp:2161> [UID = 1]: deserialized trt engine from :/home/kishore/craftifai/guardianedge-ai/pipegen-export/models/yolo11s.fp16.plan
+0:00:00.374405937 [32m 1933[00m 0x6453f3eb2c20 [36mINFO   [00m [00m    nvinfer_backport gstnvinfer.cpp:684:gst_nvinfer_backport_logger:<nvinferbackport0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::generateBackendContext() <nvdsinfer_context_impl.cpp:2264> [UID = 1]: Use deserialized engine model: /home/kishore/craftifai/guardianedge-ai/pipegen-export/models/yolo11s.fp16.plan
+0:00:00.393750313 [32m 1933[00m 0x6453f3eb2c20 [36mINFO   [00m [00m    nvinfer_backport gstnvinfer_impl.cpp:343:notifyLoadModelStatus:<nvinferbackport0>[00m [UID 1]: Load new model:/home/kishore/craftifai/guardianedge-ai/pipegen-export/pipeline/configs/config_det_pgie.txt sucessfully
+Implicit layer support has been deprecated
+INFO: [Implicit Engine Info]: layers num: 0
+
+Pipeline is PREROLLING ...
+ERROR: from element /GstPipeline:pipeline0/GstDsNvUriSrcBin:dsnvurisrcbin0/GstURIDecodeBin:nvurisrc_bin_src_elem/GstDecodeBin:decodebin0/GstTypeFindElement:typefind: Could not determine type of stream.
+Additional debug info:
+../plugins/elements/gsttypefindelement.c(1186): gst_type_find_element_loop (): /GstPipeline:pipeline0/GstDsNvUriSrcBin:dsnvurisrcbin0/GstURIDecodeBin:nvurisrc_bin_src_elem/GstDecodeBin:decodebin0/GstTypeFindElement:typefind
+ERROR: pipeline doesn't want to preroll.
+ERROR: from element /GstPipeline:pipeline0/GstDsNvUriSrcBin:dsnvurisrcbin0/GstURIDecodeBin:nvurisrc_bin_src_elem/GstDecodeBin:decodebin0/GstTypeFindElement:typefind: Internal data stream error.
+Additional debug info:
+../plugins/elements/gsttypefindelement.c(1257): gst_type_find_element_loop (): /GstPipeline:pipeline0/GstDsNvUriSrcBin:dsnvurisrcbin0/GstURIDecodeBin:nvurisrc_bin_src_elem/GstDecodeBin:decodebin0/GstTypeFindElement:typefind:
+streaming stopped, reason error (-5)
+ERROR: pipeline doesn't want to preroll.
+Setting pipeline to NULL ...
+Freeing pipeline ...
+[NvMultiObjectTracker] De-initialized

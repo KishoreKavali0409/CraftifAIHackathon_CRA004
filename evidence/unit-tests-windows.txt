@@ -1,0 +1,37 @@
+test_corrupt_json_fails_without_inventing_events (test_cli.CommandTests.test_corrupt_json_fails_without_inventing_events) ... ok
+test_empty_input_fails_to_prevent_empty_evidence_claim (test_cli.CommandTests.test_empty_input_fails_to_prevent_empty_evidence_claim) ... ok
+test_invalid_metadata_fails_with_line_number (test_cli.CommandTests.test_invalid_metadata_fails_with_line_number) ... ok
+test_jsonl_stream_produces_one_incident_from_three_inside_frames (test_cli.CommandTests.test_jsonl_stream_produces_one_incident_from_three_inside_frames) ... ok
+test_confirmed_entry_and_exit_are_rendered_with_shared_incident (test_controller.ControllerTests.test_confirmed_entry_and_exit_are_rendered_with_shared_incident) ... ok
+test_direct_frame_input_supports_future_runtime_adapter (test_controller.ControllerTests.test_direct_frame_input_supports_future_runtime_adapter) ... ok
+test_invalid_row_stops_stream_before_later_frames (test_controller.ControllerTests.test_invalid_row_stops_stream_before_later_frames) ... ok
+test_whitespace_is_not_inference_evidence (test_controller.ControllerTests.test_whitespace_is_not_inference_evidence) ... ok
+test_empty_frame_and_nonperson_remain_an_observation (test_pipegen_adapter.PipeGenAdapterTests.test_empty_frame_and_nonperson_remain_an_observation) ... ok
+test_incident_preserves_source_pts_and_explicit_time_basis (test_pipegen_adapter.PipeGenAdapterTests.test_incident_preserves_source_pts_and_explicit_time_basis) ... ok
+test_real_schema_preserves_box_tracking_and_media_time (test_pipegen_adapter.PipeGenAdapterTests.test_real_schema_preserves_box_tracking_and_media_time) ... ok
+test_unknown_identity_and_missing_pts_are_rejected (test_pipegen_adapter.PipeGenAdapterTests.test_unknown_identity_and_missing_pts_are_rejected) ... ok
+test_invalid_provenance_is_rejected_before_incident_state_changes (test_pipegen_adapter.ProvenanceValidationTests.test_invalid_provenance_is_rejected_before_incident_state_changes) ... ok
+test_submicrosecond_pts_regression_does_not_advance_state (test_pipegen_adapter.ProvenanceValidationTests.test_submicrosecond_pts_regression_does_not_advance_state) ... ok
+test_timestamp_cannot_contradict_media_pts (test_pipegen_adapter.ProvenanceValidationTests.test_timestamp_cannot_contradict_media_pts) ... ok
+test_bad_frame_does_not_partially_advance_state (test_zones.ZoneTests.test_bad_frame_does_not_partially_advance_state) ... ok
+test_cameras_do_not_share_confirmation (test_zones.ZoneTests.test_cameras_do_not_share_confirmation) ... ok
+test_coordinate_overflow_rejects_entire_frame_before_advancing_any_person (test_zones.ZoneTests.test_coordinate_overflow_rejects_entire_frame_before_advancing_any_person) ... ok
+test_different_people_do_not_share_confirmation (test_zones.ZoneTests.test_different_people_do_not_share_confirmation) ... ok
+test_disappearance_is_not_an_observed_zone_exit (test_zones.ZoneTests.test_disappearance_is_not_an_observed_zone_exit) ... ok
+test_duplicate_and_out_of_order_frames_are_rejected (test_zones.ZoneTests.test_duplicate_and_out_of_order_frames_are_rejected) ... ok
+test_exit_closes_incident_and_reentry_gets_new_id (test_zones.ZoneTests.test_exit_closes_incident_and_reentry_gets_new_id) ... ok
+test_invalid_geometry_and_metadata_are_rejected (test_zones.ZoneTests.test_invalid_geometry_and_metadata_are_rejected) ... ok
+test_missing_detection_resets_pending_confirmation (test_zones.ZoneTests.test_missing_detection_resets_pending_confirmation) ... ok
+test_nonfinite_derived_position_is_rejected (test_zones.ZoneTests.test_nonfinite_derived_position_is_rejected) ... ok
+test_nonperson_and_low_confidence_do_not_alert (test_zones.ZoneTests.test_nonperson_and_low_confidence_do_not_alert) ... ok
+test_outside_never_alerts (test_zones.ZoneTests.test_outside_never_alerts) ... ok
+test_polygon_includes_boundary_and_excludes_outside (test_zones.ZoneTests.test_polygon_includes_boundary_and_excludes_outside) ... ok
+test_short_entry_then_outside_resets_confirmation (test_zones.ZoneTests.test_short_entry_then_outside_resets_confirmation) ... ok
+test_sustained_intrusion_is_suppressed (test_zones.ZoneTests.test_sustained_intrusion_is_suppressed) ... ok
+test_three_observations_create_one_real_metadata_event (test_zones.ZoneTests.test_three_observations_create_one_real_metadata_event) ... ok
+test_unrepresentable_integer_is_rejected_as_invalid_metadata (test_zones.ZoneTests.test_unrepresentable_integer_is_rejected_as_invalid_metadata) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 0.366s
+
+OK

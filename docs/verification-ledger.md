@@ -75,3 +75,17 @@ actual export; screenshots; GitHub URL; active deadline/form; submission receipt
 - Actual container GPU check: MX550 2048 MiB, 0 MiB allocated before model compilation. No engine, speed report, inference result or export yet.
 
 - Actual app accepted sample_720p.mp4: H.264 1280x720, 30 fps, 48.067 seconds verified with ffprobe. Selected RestrictedAreaMonitoring catalog source rather than unrelated abandonment example; actual vendor downloader is active. ONNX/OpenCV reference inspected, not executed as replacement inference.
+
+## Final code and runtime verification on 16 October 2026
+- Requirement, Pipeline IR, Model, Compiler and Run completed in real PipeGen 0.5.1.
+- Actual YOLO11s TensorRT 10.3 engine compiled in 33.7 s, 20,298,204 bytes; requested FP16 with 208 FP16/18 FP32/1 unknown layers. Engine SHA256 recorded in evidence.
+- PipeGen measured 18.539 ms inference frame time, 16.925 ms GPU compute and about 54 derived FPS. This is not end-to-end video throughput. Genuine speed/IR screenshots and unmodified report saved.
+- Generated DeepStream application ran real NVIDIA sample video. Actual export completed at 2026-10-16T16:06:49Z. Untouched export retained privately; working copy includes native zone view and recording mux fix.
+- Actual frame_json.h and emitted metadata inspected. MVC adapter implemented against observed fields; preserves empty frames, real tracking IDs, boxes, dimensions and media PTS. No inference replacement.
+- Review found optional provenance inconsistency and submicrosecond PTS regression; two regressions observed failing before fixes. All 32 tests pass in final Windows and Ubuntu runs. Reviewer recheck found no remaining concrete bugs.
+- Final one-command runner completed all 1,442 real frames and 13,754 object records; MVC output: 70 intrusion confirmations, 10 observed exits, 60 track-loss events. Same-ID observed exit/reentry examples recorded in verification-summary.json.
+- Native zone overlay compiled and was visually confirmed in real recorded output. Initial fragmented MP4 emitted FFmpeg decode warnings; switched recording mux to mp4mux faststart. Final entire video decode exit 0 with no errors.
+- Actual deliberately corrupt video rejected by GStreamer with exit 1, not reported as a successful empty run.
+- Final run: work/run-20261016T162714Z. Genuine metadata, incidents, runtime logs, final video and both unit test transcripts are in the Windows evidence directory.
+- Time limitation disclosed: media-relative PTS is represented against a 1970 epoch and explicitly labelled; it is not capture UTC. Alerts are analyzed after the run, and frequent tracking/threshold losses fragment incidents.
+- User will submit personally. Do not submit forms or change account authentication on their behalf.

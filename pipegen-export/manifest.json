@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "project_name": "DeepStream Person Detection Pipeline",
+  "project_id": "96ced244-f937-4552-bf25-e1d5425b5efb",
+  "pipegen_version": "0.5.1",
+  "exported_at": "2026-10-16T16:06:49Z",
+  "origin": {
+    "gpu": "NVIDIA GeForce MX550",
+    "trt": "10.3.0",
+    "arch": "x86_64",
+    "image": "craftifaidocker/deepstream:7.1-amd64-v3",
+    "gpu_slug": "nvidia-geforce-mx550"
+  },
+  "models": [
+    {
+      "name": "yolo11s",
+      "onnx": "models/yolo11s.onnx",
+      "plan": "models/yolo11s.fp16.plan",
+      "precision": "fp16",
+      "workspace_mb": 1024,
+      "builder_optimization_level": 3,
+      "origin_builder_optimization_level": 0,
+      "onnx_sha256": "f8d06a921024c1a46091d48a59a8e377ba189f14250df167fe82f408ca37814b",
+      "plan_sha256": "5c49b9100087df47324b89249553ca79a11a6349a1e85aeb242ee74dddbaeac8",
+      "engine_bytes": 20298204,
+      "layer_count": 227
+    }
+  ],
+  "io": {
+    "default_input_kind": "file",
+    "default_input": "sample_720p.mp4",
+    "supported_inputs": [
+      "file",
+      "rtsp"
+    ],
+    "input_required": true,
+    "output_dir": "out",
+    "has_display_sink": true
+  },
+  "warnings": [
+    "the pipeline read sample_720p.mp4, which lives outside the project and cannot be shipped \u2014 the recipient must pass --input"
+  ]
+}

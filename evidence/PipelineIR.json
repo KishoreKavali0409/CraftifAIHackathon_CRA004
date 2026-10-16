@@ -1,0 +1,491 @@
+{
+  "loop": {
+    "next_file": null,
+    "next_task": null,
+    "projectTree": {},
+    "target_function": {
+      "name": "read_file",
+      "parameters": {}
+    },
+    "visited_steps": [
+      "/home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb/src1/RestrictedAreaMonitoring",
+      "/home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb/src1/RestrictedAreaMonitoring/model/yolo11s.onnx",
+      "/home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb/src1/RestrictedAreaMonitoring/application.py"
+    ]
+  },
+  "pipeline_ir": {
+    "connections": [
+      [
+        "p01o_frame",
+        "p02i_frame"
+      ],
+      [
+        "p01o_meta",
+        "p02i_meta"
+      ],
+      [
+        "p02o_blob",
+        "p03i_blob"
+      ],
+      [
+        "p02o_transform",
+        "p04i_transform"
+      ],
+      [
+        "p03o_raw",
+        "p04i_raw"
+      ],
+      [
+        "p04o_detections",
+        "p05i_detections"
+      ],
+      [
+        "p01o_frame",
+        "p06i_frame"
+      ],
+      [
+        "p05o_tracks",
+        "p06i_tracks"
+      ],
+      [
+        "p05o_tracks",
+        "p07i_tracks"
+      ]
+    ],
+    "nodes": [
+      {
+        "description": "Read the complete video and emit frames with timestamps.",
+        "id": 1,
+        "name": "file",
+        "ports": [
+          {
+            "direction": "output",
+            "format": {
+              "color": "BGR",
+              "encoding": "raw"
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p01o_frame",
+            "tensor": {
+              "dtype": "uint8",
+              "shape": [
+                720,
+                1280,
+                3
+              ]
+            }
+          },
+          {
+            "direction": "output",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p01o_meta",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          }
+        ],
+        "pseudo_code": "import cv2\n\nsource = '/home/kishore/craftifai/guardianedge-ai/media/sample_720p.mp4'\ncap = cv2.VideoCapture(source)\nif not cap.isOpened():\n    raise FileNotFoundError(source)\nfps = cap.get(cv2.CAP_PROP_FPS) or 30.0\nframe_index = 0\ntry:\n    while True:\n        ok, frame = cap.read()\n        if not ok:\n            break\n        height, width = frame.shape[:2]\n        position_ms = cap.get(cv2.CAP_PROP_POS_MSEC)\n        timestamp_s = position_ms / 1000.0 if position_ms > 0 else frame_index / fps\n        metadata = {'frame_index': frame_index, 'timestamp_s': float(timestamp_s), 'width': int(width), 'height': int(height)}\n        yield frame, metadata\n        frame_index += 1\nfinally:\n    cap.release()",
+        "resolution": [
+          1280,
+          720
+        ],
+        "type": "input",
+        "url": "file:///home/kishore/craftifai/guardianedge-ai/media/sample_720p.mp4"
+      },
+      {
+        "color_order": "RGB",
+        "description": "Letterbox frames and prepare normalized RGB detector tensors.",
+        "id": 2,
+        "mean": null,
+        "normalization": 0.00392156862745098,
+        "offset": null,
+        "pad_value": 114,
+        "ports": [
+          {
+            "direction": "input",
+            "format": {
+              "color": "BGR",
+              "encoding": "raw"
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p02i_frame",
+            "tensor": {
+              "dtype": "uint8",
+              "shape": [
+                720,
+                1280,
+                3
+              ]
+            }
+          },
+          {
+            "direction": "input",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p02i_meta",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          },
+          {
+            "direction": "output",
+            "format": {
+              "color": "RGB",
+              "encoding": "raw"
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p02o_blob",
+            "tensor": {
+              "dtype": "fp32",
+              "shape": [
+                1,
+                3,
+                640,
+                640
+              ]
+            }
+          },
+          {
+            "direction": "output",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p02o_transform",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          }
+        ],
+        "pseudo_code": "import cv2\nimport numpy as np\n\ndef preprocess(frame, metadata):\n    orig_h, orig_w = frame.shape[:2]\n    input_h, input_w = 640, 640\n    r = min(input_h / orig_h, input_w / orig_w)\n    new_w, new_h = round(orig_w * r), round(orig_h * r)\n    resized = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_LINEAR)\n    canvas = np.full((input_h, input_w, 3), 114, dtype=np.uint8)\n    pad_x, pad_y = (input_w - new_w) // 2, (input_h - new_h) // 2\n    canvas[pad_y:pad_y + new_h, pad_x:pad_x + new_w] = resized\n    blob = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0\n    blob = np.ascontiguousarray(np.transpose(blob, (2, 0, 1))[None])\n    transform = {'frame_index': metadata['frame_index'], 'timestamp_s': metadata['timestamp_s'], 'width': orig_w, 'height': orig_h, 'ratio': r, 'pad_x': pad_x, 'pad_y': pad_y}\n    return blob, transform",
+        "resize": [
+          640,
+          640
+        ],
+        "resize_mode": "letterbox",
+        "scale": 0.00392156862745098,
+        "std": null,
+        "type": "preprocess"
+      },
+      {
+        "batchSize": 1,
+        "description": "Run batch-one YOLO11s inference on prepared video frames.",
+        "id": 3,
+        "layout": "NCHW",
+        "model": {
+          "inputs": [
+            {
+              "dtype": "fp32",
+              "name": "images",
+              "shape": [
+                1,
+                3,
+                640,
+                640
+              ]
+            }
+          ],
+          "name": "YOLO11s COCO detector",
+          "outputs": [
+            {
+              "dtype": "fp32",
+              "name": "output0",
+              "shape": [
+                1,
+                84,
+                8400
+              ]
+            }
+          ],
+          "parameter_count": 9485791,
+          "type": "onnx",
+          "url": "file:///home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb/src1/RestrictedAreaMonitoring/model/yolo11s.onnx"
+        },
+        "ports": [
+          {
+            "direction": "input",
+            "format": {
+              "color": "RGB",
+              "encoding": "raw"
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p03i_blob",
+            "tensor": {
+              "dtype": "fp32",
+              "shape": [
+                1,
+                3,
+                640,
+                640
+              ]
+            }
+          },
+          {
+            "direction": "output",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p03o_raw",
+            "tensor": {
+              "dtype": "fp32",
+              "shape": [
+                1,
+                84,
+                8400
+              ]
+            }
+          }
+        ],
+        "pseudo_code": "import onnxruntime as ort\n\nmodel_path = '/home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb/src1/RestrictedAreaMonitoring/model/yolo11s.onnx'\nsess = ort.InferenceSession(model_path, providers=ort.get_available_providers())\ndef infer(blob):\n    return sess.run(['output0'], {'images': blob})[0]",
+        "type": "inference"
+      },
+      {
+        "description": "Decode person boxes, undo letterboxing, and apply NMS.",
+        "id": 4,
+        "label_file_path": null,
+        "num_classes": 80,
+        "ports": [
+          {
+            "direction": "input",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p04i_raw",
+            "tensor": {
+              "dtype": "fp32",
+              "shape": [
+                1,
+                84,
+                8400
+              ]
+            }
+          },
+          {
+            "direction": "input",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p04i_transform",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          },
+          {
+            "direction": "output",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p04o_detections",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          }
+        ],
+        "pseudo_code": "import cv2\nimport numpy as np\n\ndef decode_person(raw_output, transform):\n    confidence_threshold, nms_threshold = 0.35, 0.45\n    preds = np.squeeze(raw_output, 0).T\n    boxes_xywh, scores = preds[:, :4], preds[:, 4:]\n    class_ids = np.argmax(scores, axis=1)\n    confidences = scores[np.arange(scores.shape[0]), class_ids]\n    keep = (confidences >= confidence_threshold) & (class_ids == 0)\n    boxes_xywh = boxes_xywh[keep]\n    confidences = confidences[keep]\n    detections = []\n    if len(boxes_xywh):\n        cx, cy, w, h = boxes_xywh.T\n        ratio, pad_x, pad_y = transform['ratio'], transform['pad_x'], transform['pad_y']\n        orig_w, orig_h = transform['width'], transform['height']\n        x1 = np.clip((cx - w / 2 - pad_x) / ratio, 0, orig_w)\n        y1 = np.clip((cy - h / 2 - pad_y) / ratio, 0, orig_h)\n        x2 = np.clip((cx + w / 2 - pad_x) / ratio, 0, orig_w)\n        y2 = np.clip((cy + h / 2 - pad_y) / ratio, 0, orig_h)\n        rects = np.stack([x1, y1, x2 - x1, y2 - y1], axis=1)\n        kept = cv2.dnn.NMSBoxes(rects.tolist(), confidences.tolist(), confidence_threshold, nms_threshold)\n        kept = np.array(kept).flatten() if len(kept) else []\n        for i in kept:\n            detections.append({'box': [float(x1[i]), float(y1[i]), float(x2[i]), float(y2[i])], 'score': float(confidences[i]), 'class': 'person'})\n    return {'frame_index': transform['frame_index'], 'timestamp_s': transform['timestamp_s'], 'width': transform['width'], 'height': transform['height'], 'detections': detections}",
+        "task": "detection",
+        "threshold": 0.35,
+        "top_items": null,
+        "type": "postprocess"
+      },
+      {
+        "category": "tracking",
+        "description": "Match current person detections to persistent tracker IDs.",
+        "external_assets": [],
+        "id": 5,
+        "inputs": [
+          "bbox",
+          "metadata"
+        ],
+        "name": "person tracking",
+        "outputs": [
+          "metadata"
+        ],
+        "parameters": {
+          "initial_track_id": 1,
+          "iou_threshold": 0.3,
+          "max_age": 15,
+          "method": "multi-object tracking"
+        },
+        "placement": {
+          "attach_point": null,
+          "position": "post_nn"
+        },
+        "ports": [
+          {
+            "direction": "input",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p05i_detections",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          },
+          {
+            "direction": "output",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p05o_tracks",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          }
+        ],
+        "pseudo_code": "import numpy as np\nfrom scipy.optimize import linear_sum_assignment\n\nclass PersonTracker:\n    def __init__(self, parameters):\n        self.tracks = []\n        self.next_id = parameters['initial_track_id']\n        self.iou_threshold = parameters['iou_threshold']\n        self.max_age = parameters['max_age']\n\n    def iou(self, box_a, box_b):\n        ax1, ay1, ax2, ay2 = box_a\n        bx1, by1, bx2, by2 = box_b\n        ix1, iy1 = max(ax1, bx1), max(ay1, by1)\n        ix2, iy2 = min(ax2, bx2), min(ay2, by2)\n        inter = max(0, ix2 - ix1) * max(0, iy2 - iy1)\n        area_a = max(0, ax2 - ax1) * max(0, ay2 - ay1)\n        area_b = max(0, bx2 - bx1) * max(0, by2 - by1)\n        union = area_a + area_b - inter\n        return inter / union if union > 0 else 0.0\n\n    def new_track(self, detection):\n        track = {'id': self.next_id, 'box': detection['box'], 'score': detection['score'], 'class': detection['class'], 'misses': 0, 'hits': 1}\n        self.next_id += 1\n        return track\n\n    def update(self, packet):\n        detections = packet['detections']\n        if not self.tracks:\n            for det in detections:\n                self.tracks.append(self.new_track(det))\n        else:\n            if detections:\n                cost = np.zeros((len(self.tracks), len(detections)))\n                for i, trk in enumerate(self.tracks):\n                    for j, det in enumerate(detections):\n                        cost[i, j] = 1 - self.iou(trk['box'], det['box'])\n                row_idx, col_idx = linear_sum_assignment(cost)\n            else:\n                row_idx, col_idx = np.array([], dtype=int), np.array([], dtype=int)\n            matched_tracks, matched_dets = set(), set()\n            for r, c in zip(row_idx, col_idx):\n                if 1 - cost[r, c] >= self.iou_threshold:\n                    trk, det = self.tracks[r], detections[c]\n                    trk['box'] = det['box']\n                    trk['score'] = det['score']\n                    trk['class'] = det['class']\n                    trk['hits'] += 1\n                    trk['misses'] = 0\n                    matched_tracks.add(r)\n                    matched_dets.add(c)\n            for i, trk in enumerate(self.tracks):\n                if i not in matched_tracks:\n                    trk['misses'] += 1\n            for j, det in enumerate(detections):\n                if j not in matched_dets:\n                    self.tracks.append(self.new_track(det))\n            self.tracks = [trk for trk in self.tracks if trk['misses'] <= self.max_age]\n        objects = [{'track_id': trk['id'], 'class': trk['class'], 'confidence': float(trk['score']), 'bbox': [float(v) for v in trk['box']]} for trk in self.tracks if trk['misses'] == 0]\n        return {'frame_index': packet['frame_index'], 'timestamp_s': packet['timestamp_s'], 'width': packet['width'], 'height': packet['height'], 'objects': objects}\n\nparameters = {'method': 'multi-object tracking', 'iou_threshold': 0.3, 'max_age': 15, 'initial_track_id': 1}\ntracker = PersonTracker(parameters)\ndef process(detection_packet):\n    return tracker.update(detection_packet)",
+        "reference_path": null,
+        "runs_every_frame": true,
+        "state_key": "global",
+        "triggers": [],
+        "type": "custom"
+      },
+      {
+        "description": "Display full-size frames with current person detections annotated.",
+        "grid": null,
+        "id": 6,
+        "name": "display",
+        "output_type": "single",
+        "ports": [
+          {
+            "direction": "input",
+            "format": {
+              "color": "BGR",
+              "encoding": "raw"
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p06i_frame",
+            "tensor": {
+              "dtype": "uint8",
+              "shape": [
+                720,
+                1280,
+                3
+              ]
+            }
+          },
+          {
+            "direction": "input",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p06i_tracks",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          }
+        ],
+        "pseudo_code": "import cv2\n\ndef display(frame, track_packet):\n    out = frame.copy()\n    width = out.shape[1]\n    scale = width / 1400\n    box_thick = max(2, int(3 * scale))\n    label_scale = max(0.8, 1.1 * scale)\n    label_thick = max(1, int(2 * scale))\n    for obj in track_packet['objects']:\n        x1, y1, x2, y2 = map(int, obj['bbox'])\n        cv2.rectangle(out, (x1, y1), (x2, y2), (0, 200, 0), box_thick)\n        label = f\"{obj['class']} ID {obj['track_id']} {obj['confidence']:.2f}\"\n        (tw, th), baseline = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, label_scale, label_thick)\n        label_y = max(th + baseline + 8, y1)\n        cv2.rectangle(out, (x1, label_y - th - baseline - 8), (x1 + tw + 12, label_y), (0, 200, 0), -1)\n        cv2.putText(out, label, (x1 + 6, label_y - baseline - 3), cv2.FONT_HERSHEY_SIMPLEX, label_scale, (0, 0, 0), label_thick, cv2.LINE_AA)\n    cv2.imshow('Person detections', out)\n    cv2.waitKey(1)",
+        "resolution": [
+          1280,
+          720
+        ],
+        "type": "output",
+        "url": null
+      },
+      {
+        "description": "Write one timestamped JSON record for every frame.",
+        "grid": null,
+        "id": 7,
+        "name": "json",
+        "output_type": "single",
+        "ports": [
+          {
+            "direction": "input",
+            "format": {
+              "color": null,
+              "encoding": null
+            },
+            "framerate": {
+              "denominator": 1,
+              "numerator": 30
+            },
+            "id": "p07i_tracks",
+            "tensor": {
+              "dtype": null,
+              "shape": null
+            }
+          }
+        ],
+        "pseudo_code": "import json\nfrom pathlib import Path\n\npath = Path('/home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb/output/metadata.json')\npath.parent.mkdir(parents=True, exist_ok=True)\nfile = path.open('w', encoding='utf-8')\nfile.write('[')\nfirst = True\ndef write_frame(track_packet):\n    global first\n    if not first:\n        file.write(',\\n')\n    json.dump(track_packet, file, ensure_ascii=False)\n    file.flush()\n    first = False\n\ndef finish():\n    file.write(']\\n')\n    file.close()",
+        "resolution": null,
+        "type": "output",
+        "url": "file:///home/kishore/.pipegen/kishorekishore0409/96ced244-f937-4552-bf25-e1d5425b5efb/output/metadata.json"
+      }
+    ]
+  }
+}

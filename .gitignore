@@ -11,3 +11,8 @@ __pycache__/
 *.tar
 *.tar.gz
 work/
+*.so
+*.o
+pipegen-export/pipeline/build/
+pipegen-export/.pipegen-state/
+pipegen-export/out/

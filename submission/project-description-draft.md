@@ -1,39 +1,47 @@
-# GuardianEdge AI — Proactive Industrial Safety Intelligence
+# GuardianEdge AI — Explainable Zone Incident Monitoring
 
-Status: DRAFT. Runtime integration and mandatory evidence are still pending.
-Do not submit as a completed build until the verification checklist is satisfied.
+Participant submission draft, updated after local verification on 2026-10-16.
+The participant will submit personally; this is not a submission receipt.
 
-## Problem
-Industrial restricted areas are often watched through passive camera feeds.
-A useful safety monitor must turn an observed zone entry into a clear incident,
-without repeatedly alerting throughout the same continuous event.
+## Problem and implemented solution
+Passive camera feeds require an operator to notice zone entries. GuardianEdge
+converts tracked person observations into explainable incidents, suppresses repeat
+confirmations and distinguishes observed exits from disappearing tracks.
 
-## Proposed solution and actual work so far
-GuardianEdge is designed around a CraftifAI PipeGen-generated DeepStream
-person-detection pipeline with a TensorRT engine. The implemented downstream
-analytics module checks each person's bounding-box bottom-center against a
-configurable polygon, confirms entry over three processed observations, suppresses
-duplicate alerts, records observed exits, and reports lost tracks as uncertain.
-Its JSONL consumer and state machine currently pass 21 software tests.
+The actual PipeGen 0.5.1 workflow completed Requirement, Pipeline IR, Model,
+Compiler and Run. Its exported DeepStream pipeline uses YOLO11s, a TensorRT FP16
+engine and NVIDIA tracking. A native extension draws the configured demo polygon.
+The Python adapter consumes actual generated metadata. The MVC model checks each
+person's bounding-box bottom-center, confirms entry over three qualifying processed
+observations, records observed exits and reports track loss separately. Controllers
+orchestrate validated input; views serialize incident JSONL and diagnostics.
+Incident analysis currently runs after video completion.
 
-## Track and integration
-Track A: PipeGen. The five-stage pipeline, supported model, precision, actual
-input, generated application export and speed report must be recorded after
-the real application finishes setup and generation. The custom module performs
-metadata analysis and does not replace PipeGen, TensorRT or DeepStream inference.
+## Verified results
+The final configured-laptop GPU run processed 1,442 frames and 13,754 object records,
+producing 140 events: 70 intrusion confirmations, 10 observed exits and 60 track
+losses. All 32 software tests passed on Windows and Ubuntu. Corrupt video failed
+with a nonzero exit code. The final MP4 decoded completely without errors.
 
-## Privacy and explainability
-No facial recognition. Analytics store metadata rather than raw identifiable
-frames. Each event includes a source frame, timestamp, camera, zone, tracking ID,
-confidence and bounding box. Observed exits and missing detections have distinct
-event types so the timeline does not imply certainty the camera did not provide.
+PipeGen reported 18.539 ms/frame for the engine benchmark, approximately 54 FPS
+derived. A separate live display screenshot showed 17.36 FPS with dropped frames.
+These have different measurement scopes. Hardware: NVIDIA MX550, 2 GB VRAM.
+No measured accuracy, INT8 optimization or actual Jetson deployment is claimed.
+Jetson predictions in the original report are modelled estimates.
 
-## Before finalizing this description
-- Replace planned integration with the actual generated pipeline and run command.
-- Identify actual model, engine precision, input and tested hardware.
-- Include measured speed/latency only from actual reports; benchmark latency is
-  not automatically end-to-end application latency.
-- Link real Pipeline IR and speed-report screenshots, live demo and emitted events.
-- Confirm generated-export redistribution permissions and video provenance.
-- Include a verified GitHub URL and accurate limitations.
-- Do not claim INT8/Jetson bonus for FP16 alone.
+## Evidence and limits
+The repository includes actual exported source, Pipeline IR, original speed report,
+genuine screenshots, metadata, incidents, test transcripts and a detailed Word
+guide. Model, engine and video binaries are excluded from Git and retained locally.
+The public street sample has an explicitly labelled demonstration zone, not a real
+site restriction. Source media PTS is preserved with an explicit timestamp basis;
+it is not a capture date. No facial recognition is implemented. The demo recording
+contains visible people and vehicles. Frequent track loss can fragment incidents.
+This prototype does not claim validated industrial safety performance.
+Clean-machine standalone rebuilding has not been independently verified.
+
+Repository: https://github.com/KishoreKavali0409/guardianedge-ai
+
+The repository remains private. Before submitting, the participant must arrange
+judge access, confirm the active form and permitted attachments, and retain the
+submission receipt.

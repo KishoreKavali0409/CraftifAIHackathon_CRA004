@@ -1,50 +1,25 @@
-# MVC architecture
+# Runtime architecture
 
-GuardianEdge uses Python 3.10+ and the standard library. MVC applies to the implemented metadata analytics application. Actual PipeGen generation, inference, and its metadata adapter are still pending.
+The implemented system uses a real PipeGen-generated DeepStream pipeline for detection and tracking. Python MVC owns downstream incident analytics. The configured runner completes a real video run, then analyzes its saved metadata; it does not claim continuous streaming incident delivery.
+
+## Flow
+
+Video -> NVIDIA DeepStream decoder and TensorRT detector -> upstream tracker -> actual per-frame metadata -> PipeGen schema adapter -> MetadataController -> ZoneEngine -> JsonlView -> incident JSONL.
+
+The native view extension adds NvDsDisplayMeta before nvdsosd and draws the same demonstration polygon used by the model. It does not implement a second incident state machine.
 
 ## Responsibilities
 
-- **Model — `guardianedge/models/zones.py`:** validates normalized observations, owns per-camera/person/zone state, applies polygon and persistence rules, and creates incident dictionaries. No file, console, GUI, or transport I/O.
-- **Controller — `guardianedge/controllers/metadata.py`:** accepts a normalized frame or a JSONL stream, invokes the model, forwards events to the view, and stops malformed streams with a nonzero status. It does not implement zone geometry or tracking.
-- **View — `guardianedge/views/jsonl.py`:** renders machine-readable incident JSONL to an injected output stream and human-readable errors/status to a separate diagnostics stream. It does not change incident state. The current view is a CLI presentation, not a web dashboard.
-- **Composition root — `guardianedge/__main__.py`:** parses arguments, loads configuration, creates the model/view/controller, and connects stdin/stdout/stderr.
-- **Compatibility — `guardianedge/zones.py`:** preserves existing public imports of ZoneEngine and point_in_polygon.
+- `models/zones.py` validates the whole observation before changing per-camera, track and zone state. It owns geometry, persistence and incident lifecycle. Optional media PTS must agree with the epoch timestamp and cannot regress, even within one microsecond.
+- `controllers/metadata.py` orchestrates direct normalized observations or JSONL input. It never performs geometry or detection.
+- `views/jsonl.py` serializes events and separates diagnostics from machine-readable output.
+- `adapters/pipegen.py` maps the inspected generated frame_json.h fields, filters person metadata, requires confirmed IDs, and preserves actual PTS.
+- `__main__.py` wires the generic CLI. The adapter module is a separate composition entry point for completed PipeGen metadata.
+- `scripts/apply_zone_overlay.py` installs the native presentation extension into a working copy of the actual export. Invoke as `python3 -m scripts.apply_zone_overlay` from the repo root.
+- `scripts/run_guardianedge.sh` runs the real exported pipeline in the existing verified container, then invokes the adapter and MVC controller.
 
-## Runtime flow
+Controllers and models are synchronous session objects and are not thread safe. Output failure must not cause a caller to blindly replay an already processed frame. Empty observations are required to detect missing tracks. UUIDs are generated per replay, while event type/frame/track/zone semantics remain reproducible for the same metadata.
 
-```text
-Real PipeGen detector + tracker (pending)
-    -> verified schema adapter (pending)
-    -> MetadataController.process_frame(normalized_frame)
-    -> ZoneEngine.process(frame)
-    -> JsonlView.events(events)
-    -> incident JSONL
-```
+## Status and limits
 
-The existing command also supports normalized JSONL input:
-
-```sh
-python3 -m guardianedge --config config/zones.json < normalized-frames.jsonl > incidents.jsonl
-```
-
-For a future in-process adapter, create one controller per processing session:
-
-```python
-import sys
-from guardianedge.models.zones import ZoneEngine
-from guardianedge.controllers.metadata import MetadataController
-from guardianedge.views.jsonl import JsonlView
-
-controller = MetadataController(
-    ZoneEngine(zones=zone_configuration),
-    JsonlView(sys.stdout, sys.stderr),
-)
-# Call for every real processed frame, including empty detections:
-# controller.process_frame(normalized_frame)
-```
-
-Input must follow the README contract. Track IDs must come from a verified upstream tracker. Invalid direct frames raise validation errors; the JSONL controller reports a line number and exits with status 2. Output failures propagate; adapters must not retry already processed frames blindly. Processing is synchronous; controllers/models are not shared across threads.
-
-## Verification
-
-Run `python3 -m unittest discover -s tests -v`. Model tests cover safety transitions and atomic validation; CLI tests cover command behavior; controller tests use real models and in-memory streams to verify event presentation, direct frame ingestion, malformed-stream termination, and rejection of empty evidence. Synthetic inputs are not proof of PipeGen inference.
+32 tests pass; real video and actual metadata have been verified. The runner depends on the configured laptop's running PipeGen container and locally retained model assets. Clean-machine standalone export rebuilding and production worker-safety performance have not been verified. See README and reproduction guide.

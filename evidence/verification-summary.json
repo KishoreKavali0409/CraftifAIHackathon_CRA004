@@ -1,0 +1,45 @@
+{
+  "frames": 1442,
+  "objects": 13754,
+  "events": 140,
+  "event_counts": {
+    "RESTRICTED_ZONE_INTRUSION": 70,
+    "TRACK_LOST": 60,
+    "ZONE_EXIT": 10
+  },
+  "observed_exit_then_reentry_examples": [
+    {
+      "track_id": "11",
+      "exit_frame": 43,
+      "reentry_frame": 118
+    },
+    {
+      "track_id": "40",
+      "exit_frame": 169,
+      "reentry_frame": 175
+    },
+    {
+      "track_id": "44",
+      "exit_frame": 229,
+      "reentry_frame": 260
+    },
+    {
+      "track_id": "44",
+      "exit_frame": 263,
+      "reentry_frame": 270
+    },
+    {
+      "track_id": "44",
+      "exit_frame": 276,
+      "reentry_frame": 279
+    }
+  ],
+  "unit_tests_windows": 32,
+  "unit_tests_ubuntu": 32,
+  "final_video_full_decode_exit_code": 0,
+  "corrupt_video_pipeline_exit_code": 1,
+  "model_engine_sha256": "5c49b9100087df47324b89249553ca79a11a6349a1e85aeb242ee74dddbaeac8",
+  "raw_metadata_sha256": "b7f020d9f80574794c5c94d8f8f812b1cbae1a3c59501d7ee042965467b120e7",
+  "run_directory": "/home/kishore/craftifai/guardianedge-ai/work/run-20261016T162714Z",
+  "timestamp_basis": "media_pts_epoch_not_capture_utc"
+}

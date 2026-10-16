@@ -1,0 +1,40 @@
+[run.sh] JSON -> /home/kishore/craftifai/guardianedge-ai/work/run-20261016T162714Z/metadata.json
+make: Entering directory '/home/kishore/craftifai/guardianedge-ai/pipegen-export/pipeline/parsers'
+mkdir -p ../build
+rm -f ../build/libconfig_det_pgie_parser.so
+g++ -fPIC -O2 -std=c++14 -I /usr/local/cuda-12.6/include -I /opt/nvidia/deepstream/deepstream-7.1/sources/includes -I /opt/nvidia/deepstream/deepstream-7.1/sources/includes -I/usr/include/opencv4 -o ../build/libconfig_det_pgie_parser.so config_det_pgie_parser.cpp -shared -Wl,--no-undefined
+mkdir -p ../build
+rm -f ../build/libmeta_json.so
+g++ -fPIC -O2 -std=c++14 -Wall -I /opt/nvidia/deepstream/deepstream-7.1/sources/includes -I /usr/local/include -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -o ../build/libmeta_json.so meta_json.cpp -shared -Wl,--no-undefined -L /opt/nvidia/deepstream/deepstream-7.1/lib -lnvds_meta -Wl,-rpath,/opt/nvidia/deepstream/deepstream-7.1/lib -lglib-2.0
+mkdir -p ../build
+rm -f ../build/libvms_detect.so
+g++ -fPIC -O2 -std=c++14 -Wall -I /opt/nvidia/deepstream/deepstream-7.1/sources/includes -I /usr/local/include -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -o ../build/libvms_detect.so vms_detect.cpp -shared -Wl,--no-undefined -L /opt/nvidia/deepstream/deepstream-7.1/lib -lnvds_meta -Wl,-rpath,/opt/nvidia/deepstream/deepstream-7.1/lib -lglib-2.0
+make: Leaving directory '/home/kishore/craftifai/guardianedge-ai/pipegen-export/pipeline/parsers'
+[run.sh] encoder: x264enc (software) @ 8000kbit/s — no /dev/v4l2-nvenc
+Setting pipeline to PAUSED ...
+gstnvtracker: Loading low-level lib at /opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
+[NvMultiObjectTracker] Initialized
+0:00:00.323778418 [36m 2183[00m 0x601a1bffe440 [36mINFO   [00m [00m    nvinfer_backport gstnvinfer.cpp:684:gst_nvinfer_backport_logger:<nvinferbackport0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::deserializeEngineAndBackend() <nvdsinfer_context_impl.cpp:2161> [UID = 1]: deserialized trt engine from :/home/kishore/craftifai/guardianedge-ai/pipegen-export/models/yolo11s.fp16.plan
+0:00:00.323855453 [36m 2183[00m 0x601a1bffe440 [36mINFO   [00m [00m    nvinfer_backport gstnvinfer.cpp:684:gst_nvinfer_backport_logger:<nvinferbackport0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::generateBackendContext() <nvdsinfer_context_impl.cpp:2264> [UID = 1]: Use deserialized engine model: /home/kishore/craftifai/guardianedge-ai/pipegen-export/models/yolo11s.fp16.plan
+0:00:00.349746674 [36m 2183[00m 0x601a1bffe440 [36mINFO   [00m [00m    nvinfer_backport gstnvinfer_impl.cpp:343:notifyLoadModelStatus:<nvinferbackport0>[00m [UID 1]: Load new model:/home/kishore/craftifai/guardianedge-ai/pipegen-export/pipeline/configs/config_det_pgie.txt sucessfully
+Implicit layer support has been deprecated
+INFO: [Implicit Engine Info]: layers num: 0
+
+Pipeline is PREROLLING ...
+Failed to query video capabilities: Inappropriate ioctl for device
+Redistribute latency...
+[YOLO11s-det] first call: layer=output0 numDims=2 networkInput=640x640 numClasses=80 outputs=1
+[meta_json] file -> /home/kishore/craftifai/guardianedge-ai/work/run-20261016T162714Z/metadata.json
+Pipeline is PREROLLED ...
+Setting pipeline to PLAYING ...
+Redistribute latency...
+New clock: GstSystemClock
+Redistribute latency...
+nvstreammux: Successfully handled EOS for source_id=0
+Got EOS from element "pipeline0".
+EOS received - stopping pipeline...
+Execution ended after 0:00:35.035879657
+Setting pipeline to NULL ...
+Freeing pipeline ...
+[NvMultiObjectTracker] De-initialized
+[meta_json] 1442 frames, 13754 objects

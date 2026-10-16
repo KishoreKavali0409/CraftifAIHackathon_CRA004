@@ -1,6 +1,6 @@
 """Domain model for deterministic zone incidents; no inference or presentation I/O."""
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import math
 from uuid import uuid4
 
@@ -77,6 +77,13 @@ class ZoneEngine:
         """Validate the entire observation before process() changes any state."""
         if not isinstance(frame, dict):
             raise ValueError("frame must be an object")
+        # Provenance is copied to events, so validate it before any state change.
+        if "source_pts_ns" in frame or "timestamp_basis" in frame:
+            pts = frame.get("source_pts_ns")
+            if (not isinstance(pts, int) or isinstance(pts, bool) or pts < 0 or
+                    pts >= 18446744073709551615 or
+                    frame.get("timestamp_basis") != "media_pts_epoch_not_capture_utc"):
+                raise ValueError("valid media PTS and explicit timestamp basis required")
         camera = frame.get("camera_id")
         index = frame.get("frame_id")
         if not isinstance(camera, str) or not camera:
@@ -85,6 +92,13 @@ class ZoneEngine:
             raise ValueError("frame_id must be a nonnegative integer")
         timestamp = _timestamp(frame.get("timestamp_utc"))
         previous = self._last.get(camera)
+        if "source_pts_ns" in frame:
+            pts = frame["source_pts_ns"]
+            expected = datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(microseconds=pts // 1000)
+            if timestamp != expected:
+                raise ValueError("media timestamp must agree with source_pts_ns")
+            if previous and previous[2] is not None and pts < previous[2]:
+                raise ValueError("source_pts_ns cannot go backwards per camera")
         if previous and (index <= previous[0] or timestamp < previous[1]):
             raise ValueError("frame_id must increase and timestamps cannot go backwards per camera")
         for name in ("width", "height"):
@@ -125,13 +139,18 @@ class ZoneEngine:
     def _event(self, kind, frame, obj, zid, state):
         # Each event gets a new ID; entry and exit share their incident ID.
         # evidence_source describes the input, not proof of real inference.
-        return {"event_id": str(uuid4()), "incident_id": state["incident_id"],
+        event = {"event_id": str(uuid4()), "incident_id": state["incident_id"],
                 "event_type": kind, "timestamp_utc": frame["timestamp_utc"],
                 "camera_id": frame["camera_id"], "frame_id": frame["frame_id"],
                 "zone_id": zid, "track_id": obj["track_id"],
                 "confidence": obj["confidence"], "bbox": list(obj["bbox"]),
                 "first_seen_utc": state["first_seen_utc"],
                 "evidence_source": "upstream_metadata"}
+        # Preserve the adapter's explicit media-time provenance in each event.
+        for name in ("source_pts_ns", "timestamp_basis"):
+            if name in frame:
+                event[name] = frame[name]
+        return event
 
     def process(self, frame):
         """Process every inference frame, including empty frames. Reject invalid input atomically."""
@@ -168,5 +187,5 @@ class ZoneEngine:
                     event = self._event("TRACK_LOST", frame, state["last_object"], key[2], state)
                     event["bbox_is_last_observation"] = True
                     events.append(event)
-        self._last[camera] = (index, timestamp)
+        self._last[camera] = (index, timestamp, frame.get("source_pts_ns"))
         return events

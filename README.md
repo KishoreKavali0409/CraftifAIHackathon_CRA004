@@ -1,75 +1,85 @@
 # GuardianEdge AI
 
-Proactive Industrial Safety Intelligence — CraftifAI PipeGen Track A.
+Industrial safety analytics prototype for CraftifAI PipeGen Track A.
 
-## Current status
-**In development; not yet a verified hackathon submission.** The custom zone
-analytics and JSONL consumer pass 25 tests. PipeGen 0.5.1 is installed. Pipeline generation,
-TensorRT compilation, live inference, actual metadata integration and evidence
-are pending. See `docs/verification-ledger.md` for the precise status.
+## Implemented and verified
 
-## Purpose
-Turn person detections from a real PipeGen-generated DeepStream pipeline into
-restricted-zone incidents. A person's bounding-box bottom-center is checked
-against normalized polygons. Three consecutive processed observations confirm
-an incident; sustained presence produces one alert, observed exit closes it,
-and re-entry creates a new incident. Missing tracks create an observation-gap
-event, not an invented exit. No facial recognition or raw-frame storage is
-performed by the analytics module.
+The real PipeGen 0.5.1 workflow completed Requirement, Pipeline IR, Model, Compiler and Run. It generated a DeepStream application, compiled a YOLO11s TensorRT engine, benchmarked it, ran a real NVIDIA sample video, and exported the application. The MVC analytics consumes its actual tracked metadata and produces intrusion, observed-exit and track-loss events. A native presentation extension draws the configured demonstration zone in the actual DeepStream output.
 
-## Architecture
-The implemented analytics follows MVC: `models/` owns safety state, `controllers/` orchestrates metadata, and `views/` renders incident JSONL. See [architecture](docs/architecture.md).
-Intended integration: MP4 → PipeGen-generated DeepStream detector and tracker →
-verified metadata adapter → GuardianEdge zone state machine → JSON incident feed.
-The actual adapter must be based on the generated export, which is not available
-yet. This repository does not contain a replacement detector.
+This is a working prototype, not a production safety system or a completed submission. Submission form review and confirmation remain pending.
 
-## Test the implemented analytics
-Python 3.10+; standard library only:
+## MVC structure
 
-```sh
+| Layer | Location | Responsibility |
+|---|---|---|
+| Model | `guardianedge/models/zones.py` | Geometry, validated state, three-observation confirmation, incident lifecycle |
+| Controller | `guardianedge/controllers/metadata.py` | Frame/stream orchestration and errors |
+| View | `guardianedge/views/jsonl.py` | Incident JSONL and separate diagnostics |
+| Native view installer | `scripts/apply_zone_overlay.py` | Add zone display metadata to exported DeepStream frames |
+| Adapter | `guardianedge/adapters/pipegen.py` | Map the inspected, real DeepStream JSON schema |
+| Composition | `guardianedge/__main__.py` | CLI arguments, configuration, dependency wiring |
+| Generated pipeline | `pipegen-export/` | Actual PipeGen export, with documented overlay and recording changes |
+
+See [architecture](docs/architecture.md) and [runtime evidence](evidence/README.md). Existing `guardianedge.zones` imports remain supported.
+
+## Test the code
+
+Python 3.10+; analytics uses only the standard library:
+
+```bash
 python3 -m unittest discover -s tests -v
 ```
 
-Fixtures in tests are synthetic and are never submitted as live inference evidence.
+Tests use synthetic fixtures. Actual inference evidence is separately recorded in `evidence/`.
 
-After the real PipeGen metadata adapter is integrated, pipe normalized frame
-JSONL into the analytics consumer:
+## Run on this configured laptop
 
-```sh
-python3 -m guardianedge --config config/zones.json < normalized-frames.jsonl > incidents.jsonl
+Open Ubuntu 22.04, keep Docker Desktop and the PipeGen application running, then:
+
+```bash
+cd /home/kishore/craftifai/guardianedge-ai
+bash scripts/run_guardianedge.sh
 ```
 
-This command performs metadata analysis only. It does not establish that its
-input came from PipeGen. Empty or malformed input returns a nonzero status.
+The default source is the locally installed NVIDIA sample `media/sample_720p.mp4`. To use another video visible inside the existing container:
 
-## Metadata contract
-`ZoneEngine.process(frame)` accepts a dictionary containing `camera_id`, increasing
-integer `frame_id`, timezone-aware `timestamp_utc`, positive `width` and `height`,
-and `objects`. Each object has stable `track_id`, `class_name`, `confidence` in
-[0,1], and pixel-space `bbox` as [left, top, width, height]. Send every processed
-frame, including an empty objects list when no person is detected. Timestamps
-must not go backwards within one camera. Stable tracking IDs must come from a
-verified upstream tracker; multi-person tracking is not inferred here.
+```bash
+bash scripts/run_guardianedge.sh /home/kishore/path/to/video.mp4
+```
 
-The module emits `RESTRICTED_ZONE_INTRUSION`, `ZONE_EXIT` and `TRACK_LOST` events.
-Each incident carries source frame, camera, track, polygon and timestamp metadata.
-`dwell_seconds` on an observed exit is measured from the first qualifying inside
-observation. A lost-track event includes the last known bounding box and explicitly
-marks it stale. It has no asserted dwell time or observed exit.
+Add `--display` as the second argument for live display. Default recording mode writes `output.mp4`, actual `metadata.json`, `pipeline.log`, and the MVC `incidents.jsonl` into a new timestamped `work/run-...` folder. Incidents are processed after the video run completes; continuous streaming alerts are not implemented. The zone configuration is `config/pedestrian-demo.json`.
 
-## Hardware and limitations
-Windows + Ubuntu 22.04 WSL2, NVIDIA MX550 with 2 GB VRAM, existing Docker Desktop
-integration. Use one stream and batch 1. PipeGen/DeepStream memory feasibility is
-still unverified. No measured FPS, accuracy, latency, INT8 bonus or live hardware
-success is claimed until actual runtime reports exist.
+The full local export includes model assets. Git excludes ONNX/engine/video binaries. For a Git clone, obtain the original model using the vendor catalog download instructions in [reproduction](docs/reproduction.md), or use the full local export. Original exported `run.sh` is also included; its standalone first-run workflow has not been separately verified on a clean machine.
 
-## Evidence required before submission
-All five PipeGen stages; actual engine and speed report; live run screenshot;
-real emitted events; generated export and permitted source; accurate tested
-configuration; GitHub URL; confirmed current form and submission receipt.
+## Analyze already-recorded real metadata
 
-The official form linked in the original brief currently opens a PipeGen feedback
-form. It says the project submission link is on the last page, and feedback must
-be submitted for scoring. Deadline/extension applicability still needs organizer
-confirmation. User credentials and final submission remain user-controlled.
+```bash
+python3 -m guardianedge.adapters.pipegen \
+  --input evidence/pipegen-metadata.json \
+  --config config/pedestrian-demo.json > work/replayed-incidents.jsonl
+```
+
+Generic normalized JSONL remains supported:
+
+```bash
+python3 -m guardianedge --config config/zones.json \
+  < normalized-frames.jsonl > incidents.jsonl
+```
+
+Neither analysis command runs a detector. The real detector is the PipeGen-generated DeepStream pipeline.
+
+## Time, geometry and identity
+
+Zone polygons use normalized frame coordinates. The model checks a person's bounding-box bottom-center; three consecutive qualifying observations at confidence >=0.5 confirm an intrusion. Continued presence suppresses repeated entry alerts. Observed outside closes the incident; reentry creates a new ID. Lost/low-confidence tracks produce `TRACK_LOST`, not an invented exit.
+
+The adapter uses actual `frame`, `source_id`, `pts_ns`, dimensions, labels, boxes and tracker IDs. Every processed observation is retained, including empty person detections. It rejects unconfirmed person identities and missing/unknown PTS. Events preserve `source_pts_ns` and `timestamp_basis=media_pts_epoch_not_capture_utc`. The 1970 date in `timestamp_utc` is an explicit representation of relative video time, **not the capture date**. Dwell is derived from video PTS, not Python processing speed. Do not infer personal identity from tracker IDs.
+
+## Measured performance and limitations
+
+On this MX550 2 GB laptop, PipeGen's engine benchmark reports 18.539 ms per inference (~54 FPS derived), with 16.925 ms GPU compute. The FP16-requested engine is mixed precision: 208 FP16, 18 FP32 and one unknown layer. The live display screenshot separately shows 17.36 FPS and dropped frames. These measurements are different scopes; neither is an accuracy measurement. Modelled Jetson predictions in the vendor report are not measurements from this machine.
+
+The demonstration uses a public bundled street video and an explicitly labelled demonstration zone. It is not an industrial-site validation. The first complete overlay run yielded 70 intrusion confirmations, 10 observed exits and 60 track-loss events across 1,442 frames. Frequent track loss and threshold crossings fragment incidents; the system is not validated for worker protection. Stable identity across long occlusion/reentry is not guaranteed. No facial recognition is performed by this code.
+
+## Submission status
+
+Actual graph, benchmark report, live-run screenshot, generated sources, zone-overlay frame and real metadata/events are present. Check [acceptance](docs/acceptance-checklist.md) and [verification ledger](docs/verification-ledger.md) for remaining checks. Repo visibility, active wildcard form, user feedback and final submission confirmation must be verified before claiming submission.
