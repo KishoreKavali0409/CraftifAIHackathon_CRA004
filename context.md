@@ -150,3 +150,7 @@ Ignore credentials, `.env`, work/, installers, videos, engines/plans/ONNX, large
 ## Recommended continuation order
 
 Refresh time and remaining deadline. Inspect existing container/app without disrupting it. Fix actual input problem and let user authenticate. While awaiting login inspect preview clips and choose a credible demo zone. Capture a working base pipeline/export/benchmark FIRST. Add real adapter/zone logic and evidence. Publish honest results and finalize form with confirmation. Do not claim completion on the basis of the passing unit tests alone.
+
+## MVC implementation update — 16 October 2026
+
+The metadata analytics now uses `guardianedge/models/zones.py`, `controllers/metadata.py`, and `views/jsonl.py`. The CLI is a composition root and the old `guardianedge.zones` imports remain compatible. `MetadataController.process_frame` is the integration entry point for a future verified PipeGen adapter. See `docs/architecture.md`. The 25-test suite includes controller coverage; these remain synthetic logic tests, not inference evidence. PipeGen authentication/input and all mandatory generation/runtime evidence remain pending.

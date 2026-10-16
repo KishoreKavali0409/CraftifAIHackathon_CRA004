@@ -60,3 +60,8 @@ actual export; screenshots; GitHub URL; active deadline/form; submission receipt
 - Runtime download remains active. No PipeGen GUI, model compilation, engine, benchmark or live inference verified yet.
 - User confirmed no organizer-provided cloud GPU access is available; continue local path.
 - User explicitly authorized resuming PipeGen GUI control after the earlier Escape interruption.
+
+## MVC refactor — 16 October 2026
+- Separated domain model, metadata controller, and JSONL presentation. Existing CLI and public ZoneEngine imports preserved.
+- Added four controller integration tests using the real model and in-memory streams. Observed missing MVC modules fail first, then all 25 tests passed on Windows after implementation.
+- The real PipeGen metadata adapter, account authentication and runtime evidence are still pending; no detector or benchmark results claimed.

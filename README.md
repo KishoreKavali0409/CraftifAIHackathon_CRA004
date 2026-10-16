@@ -4,7 +4,7 @@ Proactive Industrial Safety Intelligence — CraftifAI PipeGen Track A.
 
 ## Current status
 **In development; not yet a verified hackathon submission.** The custom zone
-analytics and JSONL consumer pass 21 tests. PipeGen 0.5.1 is installed. Pipeline generation,
+analytics and JSONL consumer pass 25 tests. PipeGen 0.5.1 is installed. Pipeline generation,
 TensorRT compilation, live inference, actual metadata integration and evidence
 are pending. See `docs/verification-ledger.md` for the precise status.
 
@@ -18,6 +18,7 @@ event, not an invented exit. No facial recognition or raw-frame storage is
 performed by the analytics module.
 
 ## Architecture
+The implemented analytics follows MVC: `models/` owns safety state, `controllers/` orchestrates metadata, and `views/` renders incident JSONL. See [architecture](docs/architecture.md).
 Intended integration: MP4 → PipeGen-generated DeepStream detector and tracker →
 verified metadata adapter → GuardianEdge zone state machine → JSON incident feed.
 The actual adapter must be based on the generated export, which is not available
